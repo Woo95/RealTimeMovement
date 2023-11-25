@@ -24,7 +24,7 @@ static public class NetworkServerProcessing
             */
             case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
-                    
+
                 }
                 break;
 		}
@@ -45,9 +45,9 @@ static public class NetworkServerProcessing
 		gameLogic.Add(clientConnectionID);
 
 		string msg = ServerToClientSignifiers.PTS_CONNECTED_PLAYER + "," + gameLogic.Count();
-		foreach (int connectedPlayerID in gameLogic.m_ConnectedPlayers)
+		foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
 		{
-			SendMessageToClient(msg, connectedPlayerID, TransportPipeline.ReliableAndInOrder);
+			SendMessageToClient(msg, playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 		}
 	}
 	static public void DisconnectionEvent(int clientConnectionID)
