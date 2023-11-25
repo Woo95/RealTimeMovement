@@ -4,7 +4,24 @@ using UnityEngine;
 
 public class GameLogic : MonoBehaviour
 {
-    void Start()
+	public List<int> m_ConnectedPlayers = new List<int>();
+
+	#region connectedPlayers Functions
+	public void Add(int clientConnectionID)
+	{
+		m_ConnectedPlayers.Add(clientConnectionID);
+	}
+	public void Remove(int clientConnectionID)
+	{
+		m_ConnectedPlayers.Remove(clientConnectionID);
+	}
+	public int Count()
+	{
+		return m_ConnectedPlayers.Count;
+	}
+	#endregion
+
+	void Start()
     {
         NetworkServerProcessing.SetGameLogic(this);
     }

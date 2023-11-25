@@ -13,15 +13,19 @@ static public class NetworkServerProcessing
         string[] csv = msg.Split(',');
         int signifier = int.Parse(csv[0]);
 
-        if (signifier == ClientToServerSignifiers.asd)
+        switch (signifier)
         {
+            case ClientToServerSignifiers.PTC_CONNECTED_PLAYER:
+                {
 
-        }
-        // else if (signifier == ClientToServerSignifiers.asd)
-        // {
-
-        // }
-
+                }
+                break;
+            case ClientToServerSignifiers.PTC_PLAYER_MOVE:
+                {
+                    
+                }
+                break;
+		}
         //gameLogic.DoSomething();
     }
     static public void SendMessageToClient(string msg, int clientConnectionID, TransportPipeline pipeline)
@@ -29,15 +33,22 @@ static public class NetworkServerProcessing
         networkServer.SendMessageToClient(msg, clientConnectionID, pipeline);
     }
 
-    #endregion
+	#endregion
 
-    #region Connection Events
+	#region Connection Events
 
-    static public void ConnectionEvent(int clientConnectionID)
-    {
-        Debug.Log("Client connection, ID == " + clientConnectionID);
-    }
-    static public void DisconnectionEvent(int clientConnectionID)
+	static public void ConnectionEvent(int clientConnectionID)
+	{
+		Debug.Log("Client connection, ID == " + clientConnectionID);
+		gameLogic.Add(clientConnectionID);
+
+		string msg = ServerToClientSignifiers.PTS_CONNECTED_PLAYER + "," + gameLogic.Count();
+		foreach (int connectedPlayerID in gameLogic.m_ConnectedPlayers)
+		{
+			SendMessageToClient(msg, connectedPlayerID, TransportPipeline.ReliableAndInOrder);
+		}
+	}
+	static public void DisconnectionEvent(int clientConnectionID)
     {
         Debug.Log("Client disconnection, ID == " + clientConnectionID);
     }
@@ -67,13 +78,14 @@ static public class NetworkServerProcessing
 #region Protocol Signifiers
 static public class ClientToServerSignifiers
 {
-    public const int asd = 1;
+	public const int PTC_CONNECTED_PLAYER = 1;
+	public const int PTC_PLAYER_MOVE = 2;
 }
 
 static public class ServerToClientSignifiers
 {
-    public const int asd = 1;
+	public const int PTS_CONNECTED_PLAYER = 1;
+	public const int PTS_PLAYER_MOVE = 2;
 }
-
 #endregion
 

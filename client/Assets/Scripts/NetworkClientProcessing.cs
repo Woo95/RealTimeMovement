@@ -13,18 +13,26 @@ static public class NetworkClientProcessing
         string[] csv = msg.Split(',');
         int signifier = int.Parse(csv[0]);
 
-        // if (signifier == ServerToClientSignifiers.asd)
-        // {
+		switch (signifier)
+		{
+			case ServerToClientSignifiers.PTS_CONNECTED_PLAYER:
+				{
+					Debug.Log("PTS_CONNECTED_PLAYER");
+					int connectedPlayers = int.Parse(csv[1]);
 
-        // }
-        // else if (signifier == ServerToClientSignifiers.asd)
-        // {
+					UI_Gameplay.instance.SetConnectedPlayers(connectedPlayers);
+				}
+				break;
+			case ServerToClientSignifiers.PTS_PLAYER_MOVE:
+				{
+					Debug.Log("PTS_PLAYER_MOVE");
+				}
+				break;
+		}
 
-        // }
+		//gameLogic.DoSomething();
 
-        //gameLogic.DoSomething();
-
-    }
+	}
 
     static public void SendMessageToServer(string msg, TransportPipeline pipeline)
     {
@@ -81,13 +89,14 @@ static public class NetworkClientProcessing
 #region Protocol Signifiers
 static public class ClientToServerSignifiers
 {
-    public const int asd = 1;
+	public const int PTC_CONNECTED_PLAYER = 1;
+	public const int PTC_PLAYER_MOVE = 2;
 }
 
 static public class ServerToClientSignifiers
 {
-    public const int asd = 1;
+	public const int PTS_CONNECTED_PLAYER = 1;
+	public const int PTS_PLAYER_MOVE = 2;
 }
-
 #endregion
 
