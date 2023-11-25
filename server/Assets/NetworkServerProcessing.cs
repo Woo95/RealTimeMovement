@@ -15,11 +15,13 @@ static public class NetworkServerProcessing
 
         switch (signifier)
         {
+            /*
             case ClientToServerSignifiers.PTC_CONNECTED_PLAYER:
                 {
 
                 }
                 break;
+            */
             case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
                     
