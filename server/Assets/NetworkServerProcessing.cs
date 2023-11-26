@@ -8,13 +8,13 @@ static public class NetworkServerProcessing
     static public void ReceivedMessageFromClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
         if (DEBUG) Debug.Log("Network msg received =  " + msg + ", from connection id = " + clientConnectionID + ", from pipeline = " + pipeline);
-
+        
         string[] csv = msg.Split(',');
         int signifier = int.Parse(csv[0]);
-
+        
         switch (signifier)
         {
-			/*
+            /*
             case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER:
                 {
                 }
@@ -28,48 +28,48 @@ static public class NetworkServerProcessing
                 }
                 break;
             */
-			case ClientToServerSignifiers.PTC_PLAYER_MOVE:
+            case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
                     if (DEBUG) Debug.Log("PTC_PLAYER_MOVE");
-					StringBuilder sendMsg = new StringBuilder();
+                    StringBuilder sendMsg = new StringBuilder();
                     sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE) // Protocal,PlayerSeed,posX,posY,posZ
                            .Append(",")
                            .Append(csv[1])                                                          // Seed
                            .Append(",")
                            .Append(csv[2]).Append(",").Append(csv[3]).Append(",").Append(csv[4]);   // Position
-					foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
-					{
-						SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
-					}
-
+                    foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
+                    {
+                        SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
+                    }
+                    
                     int MovedPlayerSeed = int.Parse(csv[1]);
                     PlayerData foundPlayerData = gameLogic.Search(MovedPlayerSeed);
                     foundPlayerData.SetData(csv[2], csv[3], csv[4]);
-				}
+                }
                 break;
             /*
             case ClientToServerSignifiers.PTC_PLAYER_LEFT:
                 {
-
+                
                 }
                 break;
             */
-		}
+        }
     }
     static public void SendMessageToClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
         networkServer.SendMessageToClient(msg, clientConnectionID, pipeline);
     }
-
-	#endregion
-
-	#region Connection Events
-	static public void ConnectionEvent(int clientConnectionID)
-	{
-		if (DEBUG) Debug.Log("Client connection, ID == " + clientConnectionID);
-		StringBuilder sendMsg = new StringBuilder();
-
-		#region newJoinedPlayer
+    
+    #endregion
+    
+    #region Connection Events
+    static public void ConnectionEvent(int clientConnectionID)
+    {
+    	if (DEBUG) Debug.Log("Client connection, ID == " + clientConnectionID);
+    	StringBuilder sendMsg = new StringBuilder();
+    
+    	#region newJoinedPlayer
 		PlayerData newJoinedPlayerData = gameLogic.Add(clientConnectionID);
 
 		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER)
@@ -93,43 +93,43 @@ static public class NetworkServerProcessing
         if (gameLogic.m_ConnectedPlayers.Count > 1)
 		    SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 		#endregion
-
-		#region otherPlayers
-		sendMsg.Clear(); sendMsg.Length = 0;
+    
+    	#region otherPlayers
+    	sendMsg.Clear(); sendMsg.Length = 0;
         sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA)     // Protocal,PlayerSeed:position
                .Append(",")
                .Append(newJoinedPlayerData.m_Seed)
                .Append(":")
                .Append(newJoinedPlayerData.m_Position.x).Append("^").Append(newJoinedPlayerData.m_Position.y).Append("^").Append(newJoinedPlayerData.m_Position.z);
-		foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
-		{
+    	foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
+    	{
             if (playerData == newJoinedPlayerData)
                 continue;
-			
+    		
             SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
-		}
+    	}
         #endregion
     }
-	static public void DisconnectionEvent(int clientConnectionID)
+    static public void DisconnectionEvent(int clientConnectionID)
     {
-		if (DEBUG) Debug.Log("Client disconnection, ID == " + clientConnectionID);
-		PlayerData leftPlayerData = gameLogic.Remove(clientConnectionID);
-
+        if (DEBUG) Debug.Log("Client disconnection, ID == " + clientConnectionID);
+        PlayerData leftPlayerData = gameLogic.Remove(clientConnectionID);
+        
         StringBuilder sendMsg = new StringBuilder();
         sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_LEFT)
                .Append(",")
                .Append(leftPlayerData.m_Seed);
         foreach(PlayerData playerData in gameLogic.m_ConnectedPlayers)
         {
-			SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
-		}
-	}
+        	SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
+        }
+    }
     #endregion
-
+    
     #region Setup
     static NetworkServer networkServer;
     static GameLogic gameLogic;
-
+    
     static public void SetNetworkServer(NetworkServer NetworkServer)
     {
         networkServer = NetworkServer;
@@ -142,7 +142,6 @@ static public class NetworkServerProcessing
     {
         gameLogic = GameLogic;
     }
-
     #endregion
 }
 

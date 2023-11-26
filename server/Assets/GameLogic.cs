@@ -29,6 +29,11 @@ public class GameLogic : MonoBehaviour
 	public int m_PlayerSeed = 1000;
 	public List<PlayerData> m_ConnectedPlayers = new List<PlayerData>();
 
+	void Start()
+	{
+		NetworkServerProcessing.SetGameLogic(this);
+	}
+
 	#region connectedPlayers Functions
 	public PlayerData Add(int clientConnectionID)
 	{
@@ -65,9 +70,4 @@ public class GameLogic : MonoBehaviour
 		return foundPlayerData;
 	}
 	#endregion
-
-	void Start()
-    {
-        NetworkServerProcessing.SetGameLogic(this);
-    }
 }
