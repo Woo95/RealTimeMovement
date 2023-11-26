@@ -18,11 +18,11 @@ static public class NetworkClientProcessing
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER:
                 {
 					Debug.Log("PTS_CONNECTED_NEW_PLAYER");
-                    int playerSeed = int.Parse(csv[1]);
+                    int mySeed = int.Parse(csv[1]);
 					Vector3 position = Vector3.zero;
 					Vector3 velocity = Vector3.zero;
 
-					gameLogic.SpawnMySelf(playerSeed, position, velocity);
+					gameLogic.SpawnMySelf(mySeed, position, velocity);
 				}
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
@@ -32,7 +32,13 @@ static public class NetworkClientProcessing
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS:
                 {
-					Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");
+					Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:posX^posY^posZ:velX^velY^velZ
+                    string[] joinedPlayerData = csv[1].Split(':');
+                    int seed = int.Parse(joinedPlayerData[0]);
+                    Vector3 position = GetVector3Info(joinedPlayerData[1], '^');
+					Vector3 velocity = GetVector3Info(joinedPlayerData[1], '^');
+
+                    gameLogic.SpawnOthers(seed, position, velocity);
 				}
                 break;
 			/*
@@ -82,6 +88,18 @@ static public class NetworkClientProcessing
         networkClient.Disconnect();
     }
 
+	#endregion
+
+	#region Parse Events
+	static public Vector3 GetVector3Info(string msg, char splitChar, int startIdx = 0)
+    {
+        Vector3 result = Vector3.zero;
+
+		string[] pos = msg.Split(splitChar);
+		result.Set(float.Parse(pos[startIdx]), float.Parse(pos[startIdx+1]), float.Parse(pos[startIdx+2]));
+
+		return result;
+	}
     #endregion
 
     #region Setup
