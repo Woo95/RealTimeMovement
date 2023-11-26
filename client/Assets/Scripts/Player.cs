@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
 	GameObject m_PlayerObject;
 
 	const float m_Speed = 5.0f;
-	Vector2 m_MoveDirection;
 
 	Vector3 m_TargetPosition;
 
@@ -86,9 +85,10 @@ public class Player : MonoBehaviour
 		{
 			float hInput = Input.GetAxisRaw("Horizontal");
 			float vInput = Input.GetAxisRaw("Vertical");
-			m_MoveDirection.Set(hInput, vInput);
 
-			transform.Translate(m_MoveDirection * m_Speed * Time.deltaTime);
+			Vector3 InputVector = new Vector3(hInput, vInput, 0);
+
+			transform.position += InputVector.normalized * m_Speed * Time.deltaTime;
 
 			#region Boundary Checker
 			Vector3 position = transform.position;
