@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
 
 	Vector3 m_TargetPosition, m_TargetVelocity;
 
-	const int SEND_DATA_PER_SECOND = 20;
+	const int SEND_DATA_PER_SECOND = 50;
 	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
 	float m_NextSendTime;
 
