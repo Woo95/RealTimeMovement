@@ -85,11 +85,12 @@ static public class NetworkServerProcessing
 
 		sendMsg.Clear(); sendMsg.Length = 0;
 		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST)
-               .Append(",")
-               .Append(gameLogic.m_ConnectedPlayers.Count)
                .Append(",");
         foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers) // @playerSeed:position:velocity => @p1:px^py^pz:px^py^pz
         {
+            if (playerData == newJoinedPlayerData)
+                continue;
+
             sendMsg.Append("@")
                    .Append(playerData.m_Seed)
                    .Append(":")
@@ -97,7 +98,8 @@ static public class NetworkServerProcessing
                    .Append(":")
                    .Append(playerData.m_Velocity.x).Append("^").Append(playerData.m_Velocity.y).Append("^").Append(playerData.m_Velocity.z);
 		}
-		SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
+        if (gameLogic.m_ConnectedPlayers.Count > 1)
+		    SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 		#endregion
 
 		#region otherPlayers

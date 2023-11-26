@@ -27,16 +27,33 @@ static public class NetworkClientProcessing
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
                 {
-					Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST");
+					Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position:velocity => @p1:pX^pY^pZ:vX^vY^vZ@p2:pX^pY^pZ:vX^vY^vZ...
+                    string[] allPlayerDatas = csv[1].Split('@');
+
+                    //p1:px^py^pz:px^py^pz
+                    //p2:px^py^pz:px^py^pz
+                    //p3:px^py^pz:px^py^pz...
+                    Debug.Log(allPlayerDatas[0]);
+					for (int i=1; i < allPlayerDatas.Length; i++)
+                    {
+						Debug.Log(allPlayerDatas[i]);
+						string[] eachPlayerData = allPlayerDatas[i].Split(':');
+
+						int seed = int.Parse(eachPlayerData[0]);
+						Vector3 position = GetVector3Info(eachPlayerData[1], '^');
+						Vector3 velocity = GetVector3Info(eachPlayerData[2], '^');
+
+						gameLogic.SpawnOthers(seed, position, velocity);
+					}
 				}
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS:
                 {
-					Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:posX^posY^posZ:velX^velY^velZ
-                    string[] joinedPlayerData = csv[1].Split(':');
-                    int seed = int.Parse(joinedPlayerData[0]);
-                    Vector3 position = GetVector3Info(joinedPlayerData[1], '^');
-					Vector3 velocity = GetVector3Info(joinedPlayerData[2], '^');
+					Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:pX^pY^pZ:vX^vY^vZ
+                    string[] newJoinedPlayerData = csv[1].Split(':');
+                    int seed = int.Parse(newJoinedPlayerData[0]);
+                    Vector3 position = GetVector3Info(newJoinedPlayerData[1], '^');
+					Vector3 velocity = GetVector3Info(newJoinedPlayerData[2], '^');
 
                     gameLogic.SpawnOthers(seed, position, velocity);
 				}
