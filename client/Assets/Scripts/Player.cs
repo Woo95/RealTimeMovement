@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 [System.Serializable]
@@ -18,24 +19,26 @@ public class PlayerData
 
 public class Player : MonoBehaviour
 {
-	private Boundary m_Boundary;
+	Boundary m_Boundary;
 
 	public PlayerData m_PlayerData;
-
 	GameObject m_PlayerObject;
 
+	Vector3 m_Velocity;
 	const float m_Speed = 5.0f;
-
-	Vector2 characterPositionInPercent;
-	Vector2 characterVelocityInPercent;
-
 	Vector2 m_MoveDirection;
+
+	Vector3 m_TargetPosition, m_TargetVelocity;
 
 	public void InitData(PlayerData playerData, Vector3 velocity)
     {
 		m_PlayerObject = gameObject;
 		m_PlayerObject.SetActive(true);
+
 		m_PlayerData = playerData;
+		m_Velocity = velocity;
+
+		m_TargetPosition = transform.position;
 
 		SetBoundary();
 	}
@@ -61,6 +64,26 @@ public class Player : MonoBehaviour
 		m_Boundary.min += playerSize;
 		m_Boundary.max -= playerSize;
 	}
+	public void SendMoveToServer()
+	{
+		Vector3 position = transform.position;
+		Vector3 velocity = m_Velocity;
+		StringBuilder sendMsg = new StringBuilder();    // Protocal,PlayerSeed,pX,pY,pZ,vX,vY,vZ
+		sendMsg.Append(ClientToServerSignifiers.PTC_PLAYER_MOVE)
+			   .Append(',')
+			   .Append(m_PlayerData.m_Seed)
+			   .Append(',')
+			   .Append(position.x).Append(',').Append(position.y).Append(',').Append(position.z)
+			   .Append(',')
+			   .Append(velocity.x).Append(',').Append(velocity.y).Append(',').Append(velocity.z);
+		
+		NetworkClientProcessing.SendMessageToServer(sendMsg.ToString(), TransportPipeline.ReliableAndInOrder);
+	}
+	public void MoveOtherPlayer(Vector3 targetPos, Vector3 targetVelocity)
+	{
+		m_TargetPosition = targetPos;
+		m_TargetVelocity = targetVelocity;
+	}
 	void Update()
 	{
 		if (m_PlayerData.m_isMe)
@@ -78,6 +101,13 @@ public class Player : MonoBehaviour
 
 			transform.position = position;
 			#endregion
+
+			if (hInput != 0 || vInput != 0)
+				SendMoveToServer();
+		}
+		else
+		{
+			transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, m_Speed * Time.deltaTime);
 		}
 	}
 }

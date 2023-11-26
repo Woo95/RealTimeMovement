@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 static public class NetworkClientProcessing
@@ -58,13 +59,19 @@ static public class NetworkClientProcessing
                     gameLogic.SpawnOthers(seed, position, velocity);
 				}
                 break;
-			/*
+			
 			case ServerToClientSignifiers.PTS_PLAYER_MOVE:
 				{
-					Debug.Log("PTS_PLAYER_MOVE");
+                    Debug.Log("PTS_PLAYER_MOVE");
+					StringBuilder sendMsg = new StringBuilder();
+                    int movedPlayerSeed = int.Parse(csv[1]);
+					Vector3 position = GetVector3Info(csv, 2);
+					Vector3 velocity = GetVector3Info(csv, 5);
+
+					gameLogic.MovePlayer(movedPlayerSeed, position, velocity);
 				}
 				break;
-            */
+            
 			case ServerToClientSignifiers.PTS_PLAYER_LEFT:
 				{
 					Debug.Log("PTS_PLAYER_LEFT");
@@ -73,9 +80,6 @@ static public class NetworkClientProcessing
 				}
 				break;
 		}
-
-		//gameLogic.DoSomething();
-
 	}
 
     static public void SendMessageToServer(string msg, TransportPipeline pipeline)
@@ -119,10 +123,18 @@ static public class NetworkClientProcessing
 
 		return result;
 	}
-    #endregion
+	static public Vector3 GetVector3Info(string[] pos, int startIdx = 0)
+	{
+		Vector3 result = Vector3.zero;
 
-    #region Setup
-    static NetworkClient networkClient;
+		result.Set(float.Parse(pos[startIdx]), float.Parse(pos[startIdx + 1]), float.Parse(pos[startIdx + 2]));
+
+		return result;
+	}
+	#endregion
+
+	#region Setup
+	static NetworkClient networkClient;
     static GameLogic gameLogic;
 
     static public void SetNetworkedClient(NetworkClient NetworkClient)
