@@ -19,40 +19,37 @@ static public class NetworkClientProcessing
 					if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER");
                     int mySeed = int.Parse(csv[1]);
 					Vector3 position = Vector3.zero;
-					Vector3 velocity = Vector3.zero;
 
-					gameLogic.SpawnMySelf(mySeed, position, velocity);
+					gameLogic.SpawnMySelf(mySeed, position);
 				}
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
                 {
-					if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position:velocity => @p1:pX^pY^pZ:vX^vY^vZ@p2:pX^pY^pZ:vX^vY^vZ...
+					if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position => @p1:pX^pY^pZ@p2:pX^pY^pZ...
                     string[] allPlayerDatas = csv[1].Split('@');
 
-                    //p1:px^py^pz:px^py^pz
-                    //p2:px^py^pz:px^py^pz
-                    //p3:px^py^pz:px^py^pz...
+                    //p1:px^py^pz
+                    //p2:px^py^pz
+                    //p3:px^py^pz...
 					for (int i=1; i < allPlayerDatas.Length; i++)
                     {
 						string[] eachPlayerData = allPlayerDatas[i].Split(':');
 
 						int seed = int.Parse(eachPlayerData[0]);
 						Vector3 position = GetVector3Info(eachPlayerData[1], '^');
-						Vector3 velocity = GetVector3Info(eachPlayerData[2], '^');
 
-						gameLogic.SpawnOthers(seed, position, velocity);
+						gameLogic.SpawnOthers(seed, position);
 					}
 				}
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS:
                 {
-					if (DEBUG) Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:pX^pY^pZ:vX^vY^vZ
+					if (DEBUG) Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:pX^pY^pZ
                     string[] newJoinedPlayerData = csv[1].Split(':');
                     int seed = int.Parse(newJoinedPlayerData[0]);
                     Vector3 position = GetVector3Info(newJoinedPlayerData[1], '^');
-					Vector3 velocity = GetVector3Info(newJoinedPlayerData[2], '^');
 
-                    gameLogic.SpawnOthers(seed, position, velocity);
+                    gameLogic.SpawnOthers(seed, position);
 				}
                 break;
 			
@@ -62,9 +59,8 @@ static public class NetworkClientProcessing
 					StringBuilder sendMsg = new StringBuilder();
                     int movedPlayerSeed = int.Parse(csv[1]);
 					Vector3 position = GetVector3Info(csv, 2);
-					Vector3 velocity = GetVector3Info(csv, 5);
 
-					gameLogic.MovePlayer(movedPlayerSeed, position, velocity);
+					gameLogic.MovePlayer(movedPlayerSeed, position);
 				}
 				break;
             

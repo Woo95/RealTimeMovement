@@ -10,21 +10,21 @@ public class GameLogic : MonoBehaviour
 	{
 		NetworkClientProcessing.SetGameLogic(this);
 	}
-	public void SpawnMySelf(int mySeed, Vector3 position, Vector3 velocity)
+	public void SpawnMySelf(int mySeed, Vector3 position)
     {
 		Player mySelf = Instantiate(m_prefabPlayer, position, Quaternion.identity);
 		PlayerData myData = new PlayerData(mySelf, mySeed, true);
 
-		mySelf.InitData(myData, velocity);
+		mySelf.InitData(myData);
 
 		m_ConnectedPlayers.Add(mySelf);
 	}
-    public void SpawnOthers(int otherSeed, Vector3 position, Vector3 velocity)
+    public void SpawnOthers(int otherSeed, Vector3 position)
     {
 		Player other = Instantiate(m_prefabOthers, position, Quaternion.identity);
 		PlayerData otherData = new PlayerData(other, otherSeed, false);
 
-		other.InitData(otherData, velocity);
+		other.InitData(otherData);
 
 		m_ConnectedPlayers.Add(other);
 	}
@@ -41,7 +41,7 @@ public class GameLogic : MonoBehaviour
 		}
 	}
 
-	public void MovePlayer(int movedPlayerSeed, Vector3 targetPos, Vector3 targetVelocity)
+	public void MovePlayer(int movedPlayerSeed, Vector3 targetPos)
 	{
 		foreach (Player player in m_ConnectedPlayers)
 		{
@@ -50,7 +50,7 @@ public class GameLogic : MonoBehaviour
 
 			if (player.m_PlayerData.m_Seed == movedPlayerSeed)
 			{
-				player.MoveOtherPlayer(targetPos, targetVelocity);
+				player.MoveOtherPlayer(targetPos);
 			}
 		}
 	}

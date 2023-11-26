@@ -22,23 +22,21 @@ public class Player : MonoBehaviour
 	public PlayerData m_PlayerData;
 	GameObject m_PlayerObject;
 
-	Vector3 m_Velocity;
 	const float m_Speed = 5.0f;
 	Vector2 m_MoveDirection;
 
-	Vector3 m_TargetPosition, m_TargetVelocity;
+	Vector3 m_TargetPosition;
 
 	const int SEND_DATA_PER_SECOND = 50;
 	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
 	float m_NextSendTime;
 
-	public void InitData(PlayerData playerData, Vector3 velocity)
+	public void InitData(PlayerData playerData)
     {
 		m_PlayerObject = gameObject;
 		m_PlayerObject.SetActive(true);
 
 		m_PlayerData = playerData;
-		m_Velocity = velocity;
 
 		m_TargetPosition = transform.position;
 
@@ -69,22 +67,18 @@ public class Player : MonoBehaviour
 	public void SendMoveToServer()
 	{
 		Vector3 position = transform.position;
-		Vector3 velocity = m_Velocity;
-		StringBuilder sendMsg = new StringBuilder();    // Protocal,PlayerSeed,pX,pY,pZ,vX,vY,vZ
+		StringBuilder sendMsg = new StringBuilder();    // Protocal,PlayerSeed,pX,pY,pZ
 		sendMsg.Append(ClientToServerSignifiers.PTC_PLAYER_MOVE)
 			   .Append(',')
 			   .Append(m_PlayerData.m_Seed)
 			   .Append(',')
-			   .Append(position.x).Append(',').Append(position.y).Append(',').Append(position.z)
-			   .Append(',')
-			   .Append(velocity.x).Append(',').Append(velocity.y).Append(',').Append(velocity.z);
+			   .Append(position.x).Append(',').Append(position.y).Append(',').Append(position.z);
 		
 		NetworkClientProcessing.SendMessageToServer(sendMsg.ToString(), TransportPipeline.ReliableAndInOrder);
 	}
-	public void MoveOtherPlayer(Vector3 targetPos, Vector3 targetVelocity)
+	public void MoveOtherPlayer(Vector3 targetPos)
 	{
 		m_TargetPosition = targetPos;
-		m_TargetVelocity = targetVelocity;
 	}
 	void Update()
 	{

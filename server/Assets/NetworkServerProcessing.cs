@@ -34,13 +34,11 @@ static public class NetworkServerProcessing
 			case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
                     StringBuilder sendMsg = new StringBuilder();
-					sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE) // Protocal,PlayerSeed,posX,posY,posZ,velX,velY,velZ
-						   .Append(",")
+                    sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE) // Protocal,PlayerSeed,posX,posY,posZ
+                           .Append(",")
                            .Append(csv[1])                                                          // Seed
                            .Append(",")
-                           .Append(csv[2]).Append(",").Append(csv[3]).Append(",").Append(csv[4])    // Position
-						   .Append(",")
-						   .Append(csv[5]).Append(",").Append(csv[6]).Append(",").Append(csv[7]);   // Velocity
+                           .Append(csv[2]).Append(",").Append(csv[3]).Append(",").Append(csv[4]);   // Position
 					foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
 					{
 						SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
@@ -48,7 +46,7 @@ static public class NetworkServerProcessing
 
                     int MovedPlayerSeed = int.Parse(csv[1]);
                     PlayerData foundPlayerData = gameLogic.Search(MovedPlayerSeed);
-                    foundPlayerData.SetData(csv[2], csv[3], csv[4], csv[5], csv[6], csv[7]);
+                    foundPlayerData.SetData(csv[2], csv[3], csv[4]);
 				}
                 break;
             /*
@@ -81,20 +79,18 @@ static public class NetworkServerProcessing
                .Append(newJoinedPlayerData.m_Seed);
 		SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 
-		sendMsg.Clear(); sendMsg.Length = 0;
+        sendMsg.Clear(); sendMsg.Length = 0;
 		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST)
                .Append(",");
-        foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers) // @playerSeed:position:velocity => @p1:px^py^pz:px^py^pz
-        {
+        foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers) // @playerSeed:position => @p1:px^py^pz@p2:px^py^pz
+		{
             if (playerData == newJoinedPlayerData)
                 continue;
 
             sendMsg.Append("@")
                    .Append(playerData.m_Seed)
                    .Append(":")
-                   .Append(playerData.m_Position.x).Append("^").Append(playerData.m_Position.y).Append("^").Append(playerData.m_Position.z)
-                   .Append(":")
-                   .Append(playerData.m_Velocity.x).Append("^").Append(playerData.m_Velocity.y).Append("^").Append(playerData.m_Velocity.z);
+                   .Append(playerData.m_Position.x).Append("^").Append(playerData.m_Position.y).Append("^").Append(playerData.m_Position.z);
 		}
         if (gameLogic.m_ConnectedPlayers.Count > 1)
 		    SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
@@ -102,13 +98,11 @@ static public class NetworkServerProcessing
 
 		#region otherPlayers
 		sendMsg.Clear(); sendMsg.Length = 0;
-        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)     // Protocal,PlayerSeed:position:velocity
-			   .Append(",")
+        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)     // Protocal,PlayerSeed:position
+               .Append(",")
                .Append(newJoinedPlayerData.m_Seed)
                .Append(":")
-               .Append(newJoinedPlayerData.m_Position.x).Append("^").Append(newJoinedPlayerData.m_Position.y).Append("^").Append(newJoinedPlayerData.m_Position.z)
-               .Append(":")
-               .Append(newJoinedPlayerData.m_Velocity.x).Append("^").Append(newJoinedPlayerData.m_Velocity.y).Append("^").Append(newJoinedPlayerData.m_Velocity.z);
+               .Append(newJoinedPlayerData.m_Position.x).Append("^").Append(newJoinedPlayerData.m_Position.y).Append("^").Append(newJoinedPlayerData.m_Position.z);
 		foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
 		{
             if (playerData == newJoinedPlayerData)
