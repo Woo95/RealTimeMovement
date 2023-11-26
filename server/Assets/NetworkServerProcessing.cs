@@ -83,7 +83,7 @@ static public class NetworkServerProcessing
 
 		#region otherPlayers
 		sendMsg.Clear(); sendMsg.Length = 0;
-        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYER)
+        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)
                .Append(",")
                .Append(newJoinedPlayerData.m_Seed)
                .Append(":")
