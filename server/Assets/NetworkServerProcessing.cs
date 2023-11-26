@@ -53,8 +53,14 @@ static public class NetworkServerProcessing
                     foundPlayerData.SetData(csv[2], csv[3], csv[4], csv[5], csv[6], csv[7]);
 				}
                 break;
+            /*
+            case ClientToServerSignifiers.PTC_PLAYER_LEFT:
+                {
+
+                }
+                break;
+            */
 		}
-        //gameLogic.DoSomething();
     }
     static public void SendMessageToClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
@@ -64,7 +70,6 @@ static public class NetworkServerProcessing
 	#endregion
 
 	#region Connection Events
-
 	static public void ConnectionEvent(int clientConnectionID)
 	{
 		Debug.Log("Client connection, ID == " + clientConnectionID);
@@ -116,9 +121,17 @@ static public class NetworkServerProcessing
 	static public void DisconnectionEvent(int clientConnectionID)
     {
         Debug.Log("Client disconnection, ID == " + clientConnectionID);
-		gameLogic.Remove(clientConnectionID);
-	}
+		PlayerData leftPlayerData = gameLogic.Remove(clientConnectionID);
 
+        StringBuilder sendMsg = new StringBuilder();
+        sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_LEFT)
+               .Append(",")
+               .Append(leftPlayerData.m_Seed);
+        foreach(PlayerData playerData in gameLogic.m_ConnectedPlayers)
+        {
+			SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
+		}
+	}
     #endregion
 
     #region Setup
@@ -148,6 +161,7 @@ static public class ClientToServerSignifiers
 	public const int PTC_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
 	public const int PTC_CONNECTED_OTHER_PLAYERS        = 3;
 	public const int PTC_PLAYER_MOVE                    = 4;
+    public const int PTC_PLAYER_LEFT                    = 5;
 }
 
 static public class ServerToClientSignifiers
@@ -156,6 +170,7 @@ static public class ServerToClientSignifiers
 	public const int PTS_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
 	public const int PTS_CONNECTED_OTHER_PLAYERS        = 3;
 	public const int PTS_PLAYER_MOVE                    = 4;
+	public const int PTS_PLAYER_LEFT                    = 5;
 }
 #endregion
 

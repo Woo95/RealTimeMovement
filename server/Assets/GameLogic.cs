@@ -43,16 +43,19 @@ public class GameLogic : MonoBehaviour
 
 		return playerData;
 	}
-	public void Remove(int clientConnectionID)
+	public PlayerData Remove(int clientConnectionID)
 	{
+		PlayerData removedPlayerData = null;
 		foreach (PlayerData playerData in m_ConnectedPlayers)
 		{
 			if (playerData.m_ClientConnectionID == clientConnectionID)
 			{
-				m_ConnectedPlayers.Remove(playerData);
+				removedPlayerData = playerData;
+				m_ConnectedPlayers.Remove(removedPlayerData);
 				break;
 			}
 		}
+		return removedPlayerData;
 	}
 	public PlayerData Search(int playerSeed)
 	{
