@@ -30,6 +30,10 @@ public class Player : MonoBehaviour
 
 	Vector3 m_TargetPosition, m_TargetVelocity;
 
+	const int SEND_DATA_PER_SECOND = 20;
+	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
+	float m_NextSendTime;
+
 	public void InitData(PlayerData playerData, Vector3 velocity)
     {
 		m_PlayerObject = gameObject;
@@ -103,7 +107,13 @@ public class Player : MonoBehaviour
 			#endregion
 
 			if (hInput != 0 || vInput != 0)
-				SendMoveToServer();
+			{
+				if (Time.time >= m_NextSendTime)
+				{
+					m_NextSendTime = Time.time + DELAY_TIME_INTERVAL;
+					SendMoveToServer();
+				}
+			}
 		}
 		else
 		{
