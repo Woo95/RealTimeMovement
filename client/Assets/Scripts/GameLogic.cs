@@ -23,7 +23,7 @@ public class GameLogic : MonoBehaviour
     public void SpawnOthers(int otherSeed, Vector3 position, Vector3 velocity)
     {
 		Player other = Instantiate(m_prefabOthers, position, Quaternion.identity);
-		PlayerData otherData = new PlayerData(other, otherSeed, true);
+		PlayerData otherData = new PlayerData(other, otherSeed, false);
 
 		other.InitData(otherData, velocity);
 

@@ -36,7 +36,7 @@ static public class NetworkClientProcessing
                     string[] joinedPlayerData = csv[1].Split(':');
                     int seed = int.Parse(joinedPlayerData[0]);
                     Vector3 position = GetVector3Info(joinedPlayerData[1], '^');
-					Vector3 velocity = GetVector3Info(joinedPlayerData[1], '^');
+					Vector3 velocity = GetVector3Info(joinedPlayerData[2], '^');
 
                     gameLogic.SpawnOthers(seed, position, velocity);
 				}
