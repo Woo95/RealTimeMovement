@@ -22,7 +22,7 @@ static public class NetworkServerProcessing
 
                 }
                 break;
-            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER_SEND_LIST:
+            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
                 {
 
                 }
@@ -84,7 +84,7 @@ static public class NetworkServerProcessing
 		SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 
 		sendMsg.Clear(); sendMsg.Length = 0;
-		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_SEND_LIST)
+		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST)
                .Append(",")
                .Append(gameLogic.m_ConnectedPlayers.Count)
                .Append(",");
@@ -157,20 +157,20 @@ static public class NetworkServerProcessing
 #region Protocol Signifiers
 static public class ClientToServerSignifiers
 {
-	public const int PTC_CONNECTED_NEW_PLAYER           = 1;
-	public const int PTC_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
-	public const int PTC_CONNECTED_OTHER_PLAYERS        = 3;
-	public const int PTC_PLAYER_MOVE                    = 4;
-    public const int PTC_PLAYER_LEFT                    = 5;
+	public const int PTC_CONNECTED_NEW_PLAYER               = 1;
+	public const int PTC_CONNECTED_NEW_PLAYER_RECEIVE_LIST  = 2;
+	public const int PTC_CONNECTED_OTHER_PLAYERS            = 3;
+	public const int PTC_PLAYER_MOVE                        = 4;
+    public const int PTC_PLAYER_LEFT                        = 5;
 }
 
 static public class ServerToClientSignifiers
 {
-	public const int PTS_CONNECTED_NEW_PLAYER           = 1;
-	public const int PTS_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
-	public const int PTS_CONNECTED_OTHER_PLAYERS        = 3;
-	public const int PTS_PLAYER_MOVE                    = 4;
-	public const int PTS_PLAYER_LEFT                    = 5;
+	public const int PTS_CONNECTED_NEW_PLAYER               = 1;
+	public const int PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST  = 2;
+	public const int PTS_CONNECTED_OTHER_PLAYERS            = 3;
+	public const int PTS_PLAYER_MOVE                        = 4;
+	public const int PTS_PLAYER_LEFT                        = 5;
 }
 #endregion
 
