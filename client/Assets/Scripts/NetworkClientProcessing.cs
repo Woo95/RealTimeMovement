@@ -15,6 +15,7 @@ static public class NetworkClientProcessing
 
 		switch (signifier)
 		{
+            /*
 			case ServerToClientSignifiers.PTS_CONNECTED_PLAYER:
 				{
 					Debug.Log("PTS_CONNECTED_PLAYER");
@@ -23,11 +24,14 @@ static public class NetworkClientProcessing
 					UI_Gameplay.instance.SetConnectedPlayers(connectedPlayers);
 				}
 				break;
+            */
+            /*
 			case ServerToClientSignifiers.PTS_PLAYER_MOVE:
 				{
 					Debug.Log("PTS_PLAYER_MOVE");
 				}
 				break;
+            */
 		}
 
 		//gameLogic.DoSomething();
@@ -89,14 +93,18 @@ static public class NetworkClientProcessing
 #region Protocol Signifiers
 static public class ClientToServerSignifiers
 {
-	public const int PTC_CONNECTED_PLAYER = 1;
-	public const int PTC_PLAYER_MOVE = 2;
+	public const int PTC_CONNECTED_NEW_PLAYER           = 1;
+	public const int PTC_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
+	public const int PTC_CONNECTED_OTHER_PLAYERS        = 3;
+	public const int PTC_PLAYER_MOVE                    = 4;
 }
 
 static public class ServerToClientSignifiers
 {
-	public const int PTS_CONNECTED_PLAYER = 1;
-	public const int PTS_PLAYER_MOVE = 2;
+	public const int PTS_CONNECTED_NEW_PLAYER           = 1;
+	public const int PTS_CONNECTED_NEW_PLAYER_SEND_LIST = 2;
+	public const int PTS_CONNECTED_OTHER_PLAYERS        = 3;
+	public const int PTS_PLAYER_MOVE                    = 4;
 }
 #endregion
 

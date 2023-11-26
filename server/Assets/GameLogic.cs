@@ -7,10 +7,14 @@ public class PlayerData
 {
 	public int m_ClientConnectionID;
 	public int m_Seed;
+	public Vector3 m_Position;
+	public Vector3 m_Velocity;
 	public PlayerData(int clientConnectionID, int seed)
 	{
 		m_ClientConnectionID = clientConnectionID;
 		m_Seed = seed;
+		m_Position = Vector3.zero;
+		m_Velocity = Vector3.zero;
 	}
 }
 
@@ -20,9 +24,12 @@ public class GameLogic : MonoBehaviour
 	public List<PlayerData> m_ConnectedPlayers = new List<PlayerData>();
 
 	#region connectedPlayers Functions
-	public void Add(int clientConnectionID)
+	public PlayerData Add(int clientConnectionID)
 	{
-		m_ConnectedPlayers.Add(new PlayerData(clientConnectionID, m_PlayerSeed++));
+		PlayerData playerData = new PlayerData(clientConnectionID, m_PlayerSeed++);
+		m_ConnectedPlayers.Add(playerData);
+
+		return playerData;
 	}
 	public void Remove(int clientConnectionID)
 	{
@@ -33,10 +40,6 @@ public class GameLogic : MonoBehaviour
 				m_ConnectedPlayers.Remove(playerData);
 			}
 		}
-	}
-	public int Count()
-	{
-		return m_ConnectedPlayers.Count;
 	}
 	#endregion
 
