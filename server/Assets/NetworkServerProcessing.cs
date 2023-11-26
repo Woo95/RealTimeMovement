@@ -17,23 +17,21 @@ static public class NetworkServerProcessing
 			/*
             case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER:
                 {
-
                 }
                 break;
-            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
+            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER_RECEIVE_DATA:
                 {
-
                 }
                 break;
-            case ClientToServerSignifiers.PTC_CONNECTED_OTHER_PLAYERS:
+            case ClientToServerSignifiers.PTC_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA:
                 {
-
                 }
                 break;
             */
 			case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
-                    StringBuilder sendMsg = new StringBuilder();
+                    if (DEBUG) Debug.Log("PTC_PLAYER_MOVE");
+					StringBuilder sendMsg = new StringBuilder();
                     sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE) // Protocal,PlayerSeed,posX,posY,posZ
                            .Append(",")
                            .Append(csv[1])                                                          // Seed
@@ -80,7 +78,7 @@ static public class NetworkServerProcessing
 		SendMessageToClient(sendMsg.ToString(), newJoinedPlayerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 
         sendMsg.Clear(); sendMsg.Length = 0;
-		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST)
+		sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA)
                .Append(",");
         foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers) // @playerSeed:position => @p1:px^py^pz@p2:px^py^pz
 		{
@@ -98,7 +96,7 @@ static public class NetworkServerProcessing
 
 		#region otherPlayers
 		sendMsg.Clear(); sendMsg.Length = 0;
-        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)     // Protocal,PlayerSeed:position
+        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA)     // Protocal,PlayerSeed:position
                .Append(",")
                .Append(newJoinedPlayerData.m_Seed)
                .Append(":")
@@ -151,20 +149,20 @@ static public class NetworkServerProcessing
 #region Protocol Signifiers
 static public class ClientToServerSignifiers
 {
-	public const int PTC_CONNECTED_NEW_PLAYER               = 1;
-	public const int PTC_CONNECTED_NEW_PLAYER_RECEIVE_LIST  = 2;
-	public const int PTC_CONNECTED_OTHER_PLAYERS            = 3;
-	public const int PTC_PLAYER_MOVE                        = 4;
-    public const int PTC_PLAYER_LEFT                        = 5;
+    public const int PTC_CONNECTED_NEW_PLAYER                       = 1;
+    public const int PTC_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
+    public const int PTC_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
+    public const int PTC_PLAYER_MOVE                                = 4;
+    public const int PTC_PLAYER_LEFT                                = 5;
 }
 
 static public class ServerToClientSignifiers
 {
-	public const int PTS_CONNECTED_NEW_PLAYER               = 1;
-	public const int PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST  = 2;
-	public const int PTS_CONNECTED_OTHER_PLAYERS            = 3;
-	public const int PTS_PLAYER_MOVE                        = 4;
-	public const int PTS_PLAYER_LEFT                        = 5;
+    public const int PTS_CONNECTED_NEW_PLAYER                       = 1;
+    public const int PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
+    public const int PTS_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
+    public const int PTS_PLAYER_MOVE                                = 4;
+    public const int PTS_PLAYER_LEFT                                = 5;
 }
 #endregion
 

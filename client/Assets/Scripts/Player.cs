@@ -6,39 +6,39 @@ public class PlayerData
 {
 	public Player m_Player;
 	public int m_Seed;
-	public bool m_isMe;
+	public bool m_IsMe;
 	public PlayerData(Player player, int seed, bool isMe)
 	{
 		m_Player = player;
 		m_Seed = seed;
-		m_isMe = isMe;
+		m_IsMe = isMe;
 	}
 }
 
 public class Player : MonoBehaviour
 {
 	Boundary m_Boundary;
-
+	
 	public PlayerData m_PlayerData;
 	GameObject m_PlayerObject;
-
+	
 	const float m_Speed = 5.0f;
-
+	
 	Vector3 m_TargetPosition;
-
+	
 	const int SEND_DATA_PER_SECOND = 50;
 	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
 	float m_NextSendTime;
-
+	
 	public void InitData(PlayerData playerData)
-    {
+	{
 		m_PlayerObject = gameObject;
 		m_PlayerObject.SetActive(true);
-
+		
 		m_PlayerData = playerData;
-
+		
 		m_TargetPosition = transform.position;
-
+		
 		SetBoundary();
 	}
 	public void RemoveData()
@@ -81,23 +81,23 @@ public class Player : MonoBehaviour
 	}
 	void Update()
 	{
-		if (m_PlayerData.m_isMe)
+		if (m_PlayerData.m_IsMe)
 		{
 			float hInput = Input.GetAxisRaw("Horizontal");
 			float vInput = Input.GetAxisRaw("Vertical");
-
+			
 			Vector3 InputVector = new Vector3(hInput, vInput, 0);
-
+			
 			transform.position += InputVector.normalized * m_Speed * Time.deltaTime;
-
+			
 			#region Boundary Checker
 			Vector3 position = transform.position;
 			position.x = Mathf.Clamp(position.x, m_Boundary.min.x, m_Boundary.max.x);
 			position.y = Mathf.Clamp(position.y, m_Boundary.min.y, m_Boundary.max.y);
-
+			
 			transform.position = position;
 			#endregion
-
+			
 			if (hInput != 0 || vInput != 0)
 			{
 				if (Time.time > m_NextSendTime)
