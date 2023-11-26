@@ -50,7 +50,7 @@ public class GameLogic : MonoBehaviour
 			
 			if (player.m_PlayerData.m_Seed == movedPlayerSeed)
 			{
-				player.MoveOtherPlayer(targetPos);
+				player.SetMovePosition(targetPos);
 			}
 		}
 	}

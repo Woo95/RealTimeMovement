@@ -29,14 +29,15 @@ public class Player : MonoBehaviour
 	const int SEND_DATA_PER_SECOND = 50;
 	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
 	float m_NextSendTime;
-	
+
+	#region Data Handler
 	public void InitData(PlayerData playerData)
 	{
+		m_PlayerData = playerData;
+
 		m_PlayerObject = gameObject;
 		m_PlayerObject.SetActive(true);
-		
-		m_PlayerData = playerData;
-		
+
 		m_TargetPosition = transform.position;
 		
 		SetBoundary();
@@ -63,6 +64,9 @@ public class Player : MonoBehaviour
 		m_Boundary.min += playerSize;
 		m_Boundary.max -= playerSize;
 	}
+	#endregion
+
+	#region Move Handler
 	public void SendMoveToServer()
 	{
 		Vector3 position = transform.position;
@@ -75,10 +79,12 @@ public class Player : MonoBehaviour
 		
 		NetworkClientProcessing.SendMessageToServer(sendMsg.ToString(), TransportPipeline.ReliableAndInOrder);
 	}
-	public void MoveOtherPlayer(Vector3 targetPos)
+	public void SetMovePosition(Vector3 targetPos)
 	{
 		m_TargetPosition = targetPos;
 	}
+	#endregion
+
 	void Update()
 	{
 		if (m_PlayerData.m_IsMe)
@@ -87,14 +93,14 @@ public class Player : MonoBehaviour
 			float vInput = Input.GetAxisRaw("Vertical");
 			
 			Vector3 InputVector = new Vector3(hInput, vInput, 0);
-			
+
 			transform.position += InputVector.normalized * m_Speed * Time.deltaTime;
 			
 			#region Boundary Checker
 			Vector3 position = transform.position;
 			position.x = Mathf.Clamp(position.x, m_Boundary.min.x, m_Boundary.max.x);
 			position.y = Mathf.Clamp(position.y, m_Boundary.min.y, m_Boundary.max.y);
-			
+
 			transform.position = position;
 			#endregion
 			

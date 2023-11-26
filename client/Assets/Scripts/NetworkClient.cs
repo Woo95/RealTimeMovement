@@ -12,7 +12,7 @@ public class NetworkClient : MonoBehaviour
     const ushort NetworkPort = 9001;
     const string IPAddress = "127.0.0.1";
 
-	void Start()
+    void Start()
     {
         if (NetworkClientProcessing.GetNetworkedClient() == null)
         {
