@@ -15,16 +15,21 @@ static public class NetworkClientProcessing
 
 		switch (signifier)
 		{
-            /*
-			case ServerToClientSignifiers.PTS_CONNECTED_PLAYER:
-				{
-					Debug.Log("PTS_CONNECTED_PLAYER");
-					int connectedPlayers = int.Parse(csv[1]);
+            case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER:
+                {
 
-					UI_Gameplay.instance.SetConnectedPlayers(connectedPlayers);
-				}
-				break;
-            */
+                }
+                break;
+            case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_SEND_LIST:
+                {
+
+                }
+                break;
+            case ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS:
+                {
+
+                }
+                break;
             /*
 			case ServerToClientSignifiers.PTS_PLAYER_MOVE:
 				{

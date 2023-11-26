@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public class PlayerData
@@ -15,6 +16,17 @@ public class PlayerData
 		m_Seed = seed;
 		m_Position = Vector3.zero;
 		m_Velocity = Vector3.zero;
+	}
+
+	public void SetData(string posX, string posY, string posZ, string velX, string velY, string velZ)
+	{
+		m_Position.Set(float.Parse(posX), float.Parse(posY), float.Parse(posZ));
+		m_Velocity.Set(float.Parse(velX), float.Parse(velY), float.Parse(velZ));
+	}
+	public void SetData(float posX, float posY, float posZ, float velX, float velY, float velZ)
+	{
+		m_Position.Set(posX, posY, posZ);
+		m_Velocity.Set(velX, velY, velZ);
 	}
 }
 
@@ -41,6 +53,19 @@ public class GameLogic : MonoBehaviour
 				break;
 			}
 		}
+	}
+	public PlayerData Search(int playerSeed)
+	{
+		PlayerData foundPlayerData = null;
+		foreach (PlayerData playData in m_ConnectedPlayers)
+		{
+			if (playData.m_Seed == playerSeed)
+			{
+				foundPlayerData = playData;
+				break;
+			}
+		}
+		return foundPlayerData;
 	}
 	#endregion
 

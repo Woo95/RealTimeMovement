@@ -16,27 +16,41 @@ static public class NetworkServerProcessing
 
         switch (signifier)
         {
-            /*
-            case ClientToServerSignifiers.PTC_CONNECTED_PLAYER:
+			/*
+            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER:
+                {
+
+                }
+                break;
+            case ClientToServerSignifiers.PTC_CONNECTED_NEW_PLAYER_SEND_LIST:
+                {
+
+                }
+                break;
+            case ClientToServerSignifiers.PTC_CONNECTED_OTHER_PLAYERS:
                 {
 
                 }
                 break;
             */
-            case ClientToServerSignifiers.PTC_PLAYER_MOVE:
+			case ClientToServerSignifiers.PTC_PLAYER_MOVE:
                 {
                     StringBuilder sendMsg = new StringBuilder();
-                    sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE); 
-                    sendMsg.Append(",");
-                    sendMsg.Append(csv[1]);   // Seed
-					sendMsg.Append(",");
-                    sendMsg.Append(csv[2]);   // Position
-                    sendMsg.Append(",");
-					sendMsg.Append(csv[3]);   // Velocity
+					sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE) // Protocal,PlayerSeed,posX,posY,posZ,velX,velY,velZ
+						   .Append(",")
+                           .Append(csv[1])                                                          // Seed
+                           .Append(",")
+                           .Append(csv[2]).Append(",").Append(csv[3]).Append(",").Append(csv[4])    // Position
+						   .Append(",")
+						   .Append(csv[5]).Append(",").Append(csv[6]).Append(",").Append(csv[7]);   // Velocity
 					foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
 					{
 						SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
 					}
+
+                    int MovedPlayerSeed = int.Parse(csv[1]);
+                    PlayerData foundPlayerData = gameLogic.Search(MovedPlayerSeed);
+                    foundPlayerData.SetData(csv[2], csv[3], csv[4], csv[5], csv[6], csv[7]);
 				}
                 break;
 		}
@@ -83,8 +97,8 @@ static public class NetworkServerProcessing
 
 		#region otherPlayers
 		sendMsg.Clear(); sendMsg.Length = 0;
-        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)
-               .Append(",")
+        sendMsg.Append(ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS)     // Protocal,PlayerSeed:position:velocity
+			   .Append(",")
                .Append(newJoinedPlayerData.m_Seed)
                .Append(":")
                .Append(newJoinedPlayerData.m_Position.x).Append("^").Append(newJoinedPlayerData.m_Position.y).Append("^").Append(newJoinedPlayerData.m_Position.z)
