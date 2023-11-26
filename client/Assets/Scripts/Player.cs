@@ -106,7 +106,7 @@ public class Player : MonoBehaviour
 
 			if (hInput != 0 || vInput != 0)
 			{
-				if (Time.time >= m_NextSendTime)
+				if (Time.time > m_NextSendTime)
 				{
 					m_NextSendTime = Time.time + DELAY_TIME_INTERVAL;
 					SendMoveToServer();
