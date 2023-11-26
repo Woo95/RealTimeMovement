@@ -18,6 +18,11 @@ static public class NetworkClientProcessing
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER:
                 {
 					Debug.Log("PTS_CONNECTED_NEW_PLAYER");
+                    int playerSeed = int.Parse(csv[1]);
+					Vector3 position = Vector3.zero;
+					Vector3 velocity = Vector3.zero;
+
+					gameLogic.SpawnMySelf(playerSeed, position, velocity);
 				}
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST:

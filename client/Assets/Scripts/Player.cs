@@ -20,70 +20,32 @@ public class Player : MonoBehaviour
 {
 	public PlayerData m_PlayerData;
 
-	GameObject character;
+	GameObject m_Character;
+
+	const float m_Speed = 5.0f;
 
 	Vector2 characterPositionInPercent;
 	Vector2 characterVelocityInPercent;
-	const float CharacterSpeed = 0.25f;
-	float DiagonalCharacterSpeed;
+
+	Vector2 m_MoveDirection;
 
 	public void InitData(PlayerData playerData, Vector3 velocity)
     {
+		m_Character = gameObject;
+		m_Character.SetActive(true);
+
 		m_PlayerData = playerData;
-
-		DiagonalCharacterSpeed = Mathf.Sqrt(CharacterSpeed * CharacterSpeed + CharacterSpeed * CharacterSpeed) / 2f;
-
-		Sprite circleTexture = Resources.Load<Sprite>("Circle");
-
-		character = new GameObject("Character");
-
-		character.AddComponent<SpriteRenderer>();
-		character.GetComponent<SpriteRenderer>().sprite = circleTexture;
 	}
 
 	void Update()
 	{
-
-		if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
-			|| Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+		if (m_PlayerData.m_isMe)
 		{
-			characterVelocityInPercent = Vector2.zero;
+			float hInput = Input.GetAxisRaw("Horizontal");
+			float vInput = Input.GetAxisRaw("Vertical");
+			m_MoveDirection.Set(hInput, vInput);
 
-			if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-			{
-				characterVelocityInPercent.x = DiagonalCharacterSpeed;
-				characterVelocityInPercent.y = DiagonalCharacterSpeed;
-			}
-			else if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-			{
-				characterVelocityInPercent.x = -DiagonalCharacterSpeed;
-				characterVelocityInPercent.y = DiagonalCharacterSpeed;
-			}
-			else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-			{
-				characterVelocityInPercent.x = DiagonalCharacterSpeed;
-				characterVelocityInPercent.y = -DiagonalCharacterSpeed;
-			}
-			else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-			{
-				characterVelocityInPercent.x = -DiagonalCharacterSpeed;
-				characterVelocityInPercent.y = -DiagonalCharacterSpeed;
-			}
-			else if (Input.GetKey(KeyCode.D))
-				characterVelocityInPercent.x = CharacterSpeed;
-			else if (Input.GetKey(KeyCode.A))
-				characterVelocityInPercent.x = -CharacterSpeed;
-			else if (Input.GetKey(KeyCode.W))
-				characterVelocityInPercent.y = CharacterSpeed;
-			else if (Input.GetKey(KeyCode.S))
-				characterVelocityInPercent.y = -CharacterSpeed;
+			transform.Translate(m_MoveDirection * m_Speed * Time.deltaTime);
 		}
-
-		characterPositionInPercent += (characterVelocityInPercent * Time.deltaTime);
-
-		Vector2 screenPos = new Vector2(characterPositionInPercent.x * (float)Screen.width, characterPositionInPercent.y * (float)Screen.height);
-		Vector3 characterPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
-		characterPos.z = 0;
-		character.transform.position = characterPos;
 	}
 }
