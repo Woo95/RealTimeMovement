@@ -51,6 +51,8 @@ static public class NetworkClientProcessing
 			case ServerToClientSignifiers.PTS_PLAYER_LEFT:
 				{
 					Debug.Log("PTS_PLAYER_LEFT");
+					int leftPlayerSeed = int.Parse(csv[1]);
+					gameLogic.OtherPlayerLeft(leftPlayerSeed);
 				}
 				break;
 		}

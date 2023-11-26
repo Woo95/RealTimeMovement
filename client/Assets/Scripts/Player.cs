@@ -40,6 +40,13 @@ public class Player : MonoBehaviour
 
 		SetBoundary();
 	}
+	public void RemoveData()
+	{
+		if (m_PlayerObject != null)
+		{
+			Destroy(gameObject);
+		}
+	}
 	public void SetBoundary()
 	{
 		Camera camera = Camera.main;

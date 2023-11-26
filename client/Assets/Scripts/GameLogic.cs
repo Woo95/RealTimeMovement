@@ -6,7 +6,7 @@ public class GameLogic : MonoBehaviour
 {
 	public Player m_prefabPlayer;
 	public Player m_prefabOthers;
-	public List<PlayerData> m_ConnectedPlayers = new List<PlayerData>();
+	public List<Player> m_ConnectedPlayers = new List<Player>();
 	void Start()
 	{
 		NetworkClientProcessing.SetGameLogic(this);
@@ -18,6 +18,7 @@ public class GameLogic : MonoBehaviour
 
 		mySelf.InitData(myData, velocity);
 
+		m_ConnectedPlayers.Add(mySelf);
 	}
     public void SpawnOthers(int otherSeed, Vector3 position, Vector3 velocity)
     {
@@ -25,5 +26,19 @@ public class GameLogic : MonoBehaviour
 		PlayerData otherData = new PlayerData(other, otherSeed, true);
 
 		other.InitData(otherData, velocity);
+
+		m_ConnectedPlayers.Add(other);
+	}
+	public void OtherPlayerLeft(int leftPlayerSeed)
+	{
+		foreach (Player player in m_ConnectedPlayers)
+		{
+			if (player.m_PlayerData.m_Seed == leftPlayerSeed)
+			{
+				m_ConnectedPlayers.Remove(player);
+				player.RemoveData();
+				break;
+			}
+		}
 	}
 }
