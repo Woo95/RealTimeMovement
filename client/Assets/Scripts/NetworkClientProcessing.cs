@@ -5,11 +5,11 @@ using UnityEngine;
 
 static public class NetworkClientProcessing
 {
-
-    #region Send and Receive Data Functions
-    static public void ReceivedMessageFromServer(string msg, TransportPipeline pipeline)
+	const bool DEBUG = false;
+	#region Send and Receive Data Functions
+	static public void ReceivedMessageFromServer(string msg, TransportPipeline pipeline)
     {
-        Debug.Log("Network msg received =  " + msg + ", from pipeline = " + pipeline);
+        if (DEBUG) Debug.Log("Network msg received =  " + msg + ", from pipeline = " + pipeline);
 
         string[] csv = msg.Split(',');
         int signifier = int.Parse(csv[0]);
@@ -18,7 +18,7 @@ static public class NetworkClientProcessing
 		{
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER:
                 {
-					Debug.Log("PTS_CONNECTED_NEW_PLAYER");
+					if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER");
                     int mySeed = int.Parse(csv[1]);
 					Vector3 position = Vector3.zero;
 					Vector3 velocity = Vector3.zero;
@@ -28,16 +28,14 @@ static public class NetworkClientProcessing
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST:
                 {
-					Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position:velocity => @p1:pX^pY^pZ:vX^vY^vZ@p2:pX^pY^pZ:vX^vY^vZ...
+					if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position:velocity => @p1:pX^pY^pZ:vX^vY^vZ@p2:pX^pY^pZ:vX^vY^vZ...
                     string[] allPlayerDatas = csv[1].Split('@');
 
                     //p1:px^py^pz:px^py^pz
                     //p2:px^py^pz:px^py^pz
                     //p3:px^py^pz:px^py^pz...
-                    Debug.Log(allPlayerDatas[0]);
 					for (int i=1; i < allPlayerDatas.Length; i++)
                     {
-						Debug.Log(allPlayerDatas[i]);
 						string[] eachPlayerData = allPlayerDatas[i].Split(':');
 
 						int seed = int.Parse(eachPlayerData[0]);
@@ -50,7 +48,7 @@ static public class NetworkClientProcessing
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_OTHER_PLAYERS:
                 {
-					Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:pX^pY^pZ:vX^vY^vZ
+					if (DEBUG) Debug.Log("PTS_CONNECTED_OTHER_PLAYERS");   // recieved newPlayerInfo => PlayerSeed:pX^pY^pZ:vX^vY^vZ
                     string[] newJoinedPlayerData = csv[1].Split(':');
                     int seed = int.Parse(newJoinedPlayerData[0]);
                     Vector3 position = GetVector3Info(newJoinedPlayerData[1], '^');
@@ -62,7 +60,7 @@ static public class NetworkClientProcessing
 			
 			case ServerToClientSignifiers.PTS_PLAYER_MOVE:
 				{
-                    Debug.Log("PTS_PLAYER_MOVE");
+					if (DEBUG) Debug.Log("PTS_PLAYER_MOVE");
 					StringBuilder sendMsg = new StringBuilder();
                     int movedPlayerSeed = int.Parse(csv[1]);
 					Vector3 position = GetVector3Info(csv, 2);
@@ -74,7 +72,7 @@ static public class NetworkClientProcessing
             
 			case ServerToClientSignifiers.PTS_PLAYER_LEFT:
 				{
-					Debug.Log("PTS_PLAYER_LEFT");
+					if (DEBUG) Debug.Log("PTS_PLAYER_LEFT");
 					int leftPlayerSeed = int.Parse(csv[1]);
 					gameLogic.OtherPlayerLeft(leftPlayerSeed);
 				}
@@ -92,11 +90,11 @@ static public class NetworkClientProcessing
     #region Connection Related Functions and Events
     static public void ConnectionEvent()
     {
-        Debug.Log("Network Connection Event!");
+		if (DEBUG) Debug.Log("Network Connection Event!");
     }
     static public void DisconnectionEvent()
     {
-        Debug.Log("Network Disconnection Event!");
+		if (DEBUG) Debug.Log("Network Disconnection Event!");
     }
     static public bool IsConnectedToServer()
     {

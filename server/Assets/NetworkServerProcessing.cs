@@ -5,11 +5,11 @@ using System.Text;
 
 static public class NetworkServerProcessing
 {
-
+    const bool DEBUG = false;
     #region Send and Receive Data Functions
     static public void ReceivedMessageFromClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
-        Debug.Log("Network msg received =  " + msg + ", from connection id = " + clientConnectionID + ", from pipeline = " + pipeline);
+        if (DEBUG) Debug.Log("Network msg received =  " + msg + ", from connection id = " + clientConnectionID + ", from pipeline = " + pipeline);
 
         string[] csv = msg.Split(',');
         int signifier = int.Parse(csv[0]);
@@ -72,7 +72,7 @@ static public class NetworkServerProcessing
 	#region Connection Events
 	static public void ConnectionEvent(int clientConnectionID)
 	{
-		Debug.Log("Client connection, ID == " + clientConnectionID);
+		if (DEBUG) Debug.Log("Client connection, ID == " + clientConnectionID);
 		StringBuilder sendMsg = new StringBuilder();
 
 		#region newJoinedPlayer
@@ -122,7 +122,7 @@ static public class NetworkServerProcessing
     }
 	static public void DisconnectionEvent(int clientConnectionID)
     {
-        Debug.Log("Client disconnection, ID == " + clientConnectionID);
+		if (DEBUG) Debug.Log("Client disconnection, ID == " + clientConnectionID);
 		PlayerData leftPlayerData = gameLogic.Remove(clientConnectionID);
 
         StringBuilder sendMsg = new StringBuilder();
