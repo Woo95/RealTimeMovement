@@ -38,6 +38,7 @@ public class GameLogic : MonoBehaviour
 			if (playerData.m_ClientConnectionID == clientConnectionID)
 			{
 				m_ConnectedPlayers.Remove(playerData);
+				break;
 			}
 		}
 	}

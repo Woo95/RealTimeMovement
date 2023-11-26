@@ -102,7 +102,8 @@ static public class NetworkServerProcessing
 	static public void DisconnectionEvent(int clientConnectionID)
     {
         Debug.Log("Client disconnection, ID == " + clientConnectionID);
-    }
+		gameLogic.Remove(clientConnectionID);
+	}
 
     #endregion
 
