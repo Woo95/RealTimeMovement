@@ -50,7 +50,6 @@ static public class NetworkServerProcessing
             /*
             case ClientToServerSignifiers.PTC_PLAYER_LEFT:
                 {
-                
                 }
                 break;
             */
