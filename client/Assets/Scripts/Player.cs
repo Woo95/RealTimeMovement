@@ -38,22 +38,23 @@ public class Player : MonoBehaviour
 		m_PlayerObject.SetActive(true);
 		m_PlayerData = playerData;
 
-		#region Set Boundary
+		SetBoundary();
+	}
+	public void SetBoundary()
+	{
 		Camera camera = Camera.main;
 		Vector3 pos = camera.transform.position;
 		SpriteRenderer playerSpriteRenderer = GetComponent<SpriteRenderer>();
 		Vector2 playerSize = playerSpriteRenderer.bounds.size * 0.5f;
 
-		m_Boundary.min = new Vector2(pos.x - camera.orthographicSize * camera.aspect, 
+		m_Boundary.min = new Vector2(pos.x - camera.orthographicSize * camera.aspect,
 									 pos.y - camera.orthographicSize);
 		m_Boundary.max = new Vector2(pos.x + camera.orthographicSize * camera.aspect,
 									 pos.y + camera.orthographicSize);
 
 		m_Boundary.min += playerSize;
 		m_Boundary.max -= playerSize;
-		#endregion
 	}
-
 	void Update()
 	{
 		if (m_PlayerData.m_isMe)
