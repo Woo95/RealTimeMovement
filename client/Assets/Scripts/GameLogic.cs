@@ -54,4 +54,17 @@ public class GameLogic : MonoBehaviour
 			}
 		}
 	}
+	public void MovePlayer(int movedPlayerSeed, Vector3 targetPos, Vector2 inputKeys)
+	{
+		foreach (Player player in m_ConnectedPlayers)
+		{
+			if (player.m_PlayerData.m_IsMe)
+				continue;
+
+			if (player.m_PlayerData.m_Seed == movedPlayerSeed)
+			{
+				player.SetMovePosition(targetPos, inputKeys);
+			}
+		}
+	}
 }

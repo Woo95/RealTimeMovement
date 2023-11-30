@@ -3,7 +3,7 @@ using System.Text;
 
 static public class NetworkServerProcessing
 {
-    const bool DEBUG = false;
+    const bool DEBUG = true;
     #region Send and Receive Data Functions
     static public void ReceivedMessageFromClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
@@ -41,19 +41,44 @@ static public class NetworkServerProcessing
                     {
                         SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
                     }
-                    
+
+                    #region For Moving Player - Save Position
                     int MovedPlayerSeed = int.Parse(csv[1]);
                     PlayerData foundPlayerData = gameLogic.Search(MovedPlayerSeed);
                     foundPlayerData.SetData(csv[2], csv[3], csv[4]);
+                    #endregion
                 }
                 break;
-            /*
-            case ClientToServerSignifiers.PTC_PLAYER_LEFT:
-                {
+			case ClientToServerSignifiers.PTC_PLAYER_MOVE2:
+				{
+					if (DEBUG) Debug.Log("PTC_PLAYER_MOVE2");
+					StringBuilder sendMsg = new StringBuilder();
+                    sendMsg.Append(ServerToClientSignifiers.PTS_PLAYER_MOVE2) // Protocal,PlayerSeed,posX,posY,posZ,inputKeyX,inputKeyY
+                           .Append(",")
+                           .Append(csv[1])                                                          // Seed
+                           .Append(",")
+                           .Append(csv[2]).Append(",").Append(csv[3]).Append(",").Append(csv[4])    // Position
+                           .Append(",")
+                           .Append(csv[5]).Append(",").Append(csv[6]);                              // Input Keys
+					foreach (PlayerData playerData in gameLogic.m_ConnectedPlayers)
+					{
+						SendMessageToClient(sendMsg.ToString(), playerData.m_ClientConnectionID, TransportPipeline.ReliableAndInOrder);
+					}
+
+                    #region For Moving Player - Save Position, and Input Keys
+                    int MovedPlayerSeed = int.Parse(csv[1]);
+					PlayerData foundPlayerData = gameLogic.Search(MovedPlayerSeed);
+					foundPlayerData.SetData(csv[2], csv[3], csv[4], csv[5], csv[6]);
+                    #endregion
                 }
-                break;
-            */
-        }
+				break;
+				/*
+				case ClientToServerSignifiers.PTC_PLAYER_LEFT:
+					{
+					}
+					break;
+				*/
+		}
     }
     static public void SendMessageToClient(string msg, int clientConnectionID, TransportPipeline pipeline)
     {
@@ -151,7 +176,8 @@ static public class ClientToServerSignifiers
     public const int PTC_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
     public const int PTC_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
     public const int PTC_PLAYER_MOVE                                = 4;
-    public const int PTC_PLAYER_LEFT                                = 5;
+	public const int PTC_PLAYER_MOVE2                               = 5;
+	public const int PTC_PLAYER_LEFT                                = 6;
 }
 
 static public class ServerToClientSignifiers
@@ -159,8 +185,9 @@ static public class ServerToClientSignifiers
     public const int PTS_CONNECTED_NEW_PLAYER                       = 1;
     public const int PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
     public const int PTS_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
-    public const int PTS_PLAYER_MOVE                                = 4;
-    public const int PTS_PLAYER_LEFT                                = 5;
+	public const int PTS_PLAYER_MOVE                                = 4;
+	public const int PTS_PLAYER_MOVE2                               = 5;
+	public const int PTS_PLAYER_LEFT                                = 6;
 }
 #endregion
 

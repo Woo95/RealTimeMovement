@@ -25,10 +25,17 @@ public class Player : MonoBehaviour
 	const float m_Speed = 5.0f;
 	
 	Vector3 m_TargetPosition;
-	
-	const int SEND_DATA_PER_SECOND = 50;
+	Vector2 m_TargetInputKey;
+
+	#region Send Move Data Variables - Type A
+	const int SEND_DATA_PER_SECOND = 10;
 	const float DELAY_TIME_INTERVAL = 1.0f / SEND_DATA_PER_SECOND;
 	float m_NextSendTime;
+	#endregion
+
+	#region Send Move Data Variables - Type B
+	float hInputBackup, vInputBackup;
+	#endregion
 
 	#region Data Handler
 	public void InitData(PlayerData playerData)
@@ -67,7 +74,8 @@ public class Player : MonoBehaviour
 	#endregion
 
 	#region Move Handler
-	public void SendMoveToServer()
+	#region Type A
+	public void SendMoveToServerTypeA()
 	{
 		Vector3 position = transform.position;
 		StringBuilder sendMsg = new StringBuilder();    // Protocal,PlayerSeed,pX,pY,pZ
@@ -85,6 +93,29 @@ public class Player : MonoBehaviour
 	}
 	#endregion
 
+	#region Type B
+	public void SendMoveToServerTypeB(Vector3 inputVector)
+	{
+		Vector3 position = transform.position;
+		StringBuilder sendMsg = new StringBuilder();    // Protocal,PlayerSeed,pX,pY,pZ
+		sendMsg.Append(ClientToServerSignifiers.PTC_PLAYER_MOVE2)
+			   .Append(',')
+			   .Append(m_PlayerData.m_Seed)
+			   .Append(',')
+			   .Append(position.x).Append(',').Append(position.y).Append(',').Append(position.z)
+			   .Append(',')
+			   .Append(inputVector.x).Append(',').Append(inputVector.y);
+
+		NetworkClientProcessing.SendMessageToServer(sendMsg.ToString(), TransportPipeline.ReliableAndInOrder);
+	}
+	public void SetMovePosition(Vector3 targetPos, Vector2 inputKey)
+	{
+		m_TargetPosition = targetPos;
+		m_TargetInputKey = inputKey;
+	}
+	#endregion
+	#endregion
+
 	void Update()
 	{
 		if (m_PlayerData.m_IsMe)
@@ -92,18 +123,12 @@ public class Player : MonoBehaviour
 			float hInput = Input.GetAxisRaw("Horizontal");
 			float vInput = Input.GetAxisRaw("Vertical");
 			
-			Vector3 InputVector = new Vector3(hInput, vInput, 0);
+			Vector3 inputVector = new Vector3(hInput, vInput, 0);
 
-			transform.position += InputVector.normalized * m_Speed * Time.deltaTime;
-			
-			#region Boundary Checker
-			Vector3 position = transform.position;
-			position.x = Mathf.Clamp(position.x, m_Boundary.min.x, m_Boundary.max.x);
-			position.y = Mathf.Clamp(position.y, m_Boundary.min.y, m_Boundary.max.y);
+			transform.position += inputVector.normalized * m_Speed * Time.deltaTime;
 
-			transform.position = position;
-			#endregion
-			
+			#region Send Move Data - Type A (Sending data 10 times/s)
+			/*
 			if (hInput != 0 || vInput != 0)
 			{
 				if (Time.time > m_NextSendTime)
@@ -112,10 +137,39 @@ public class Player : MonoBehaviour
 					SendMoveToServer();
 				}
 			}
+			*/
+			#endregion
+
+			#region Send Move Data - Type B (Sending data only once on the keyDown & keyUp)
+			if (hInput != hInputBackup || vInput != vInputBackup)
+			{
+				SendMoveToServerTypeB(inputVector);
+			}
+			hInputBackup = hInput;
+			vInputBackup = vInput;
+			#endregion
 		}
 		else
 		{
-			transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, m_Speed * Time.deltaTime);
+			#region Type A
+			//transform.position = Vector3.MoveTowards(transform.position, m_TargetPosition, m_Speed * Time.deltaTime);   // Type A
+			#endregion
+
+			#region Type B
+			float hInput = m_TargetInputKey.x;
+			float vInput = m_TargetInputKey.y;
+
+			Vector3 inputVector = new Vector3(hInput, vInput, 0);
+
+			transform.position += inputVector.normalized * m_Speed * Time.deltaTime;
+			#endregion
 		}
+		#region Boundary Checker
+		Vector3 position = transform.position;
+		position.x = Mathf.Clamp(position.x, m_Boundary.min.x, m_Boundary.max.x);
+		position.y = Mathf.Clamp(position.y, m_Boundary.min.y, m_Boundary.max.y);
+
+		transform.position = position;
+		#endregion
 	}
 }

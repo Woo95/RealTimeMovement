@@ -25,7 +25,7 @@ static public class NetworkClientProcessing
                 break;
             case ServerToClientSignifiers.PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA:
                 {
-                    if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_LIST"); // @playerSeed:position => @p1:pX^pY^pZ@p2:pX^pY^pZ...
+                    if (DEBUG) Debug.Log("PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA"); // @playerSeed:position => @p1:pX^pY^pZ@p2:pX^pY^pZ...
                     string[] allPlayerDatas = csv[1].Split('@');
                     
                     //p1:px^py^pz
@@ -56,15 +56,23 @@ static public class NetworkClientProcessing
             case ServerToClientSignifiers.PTS_PLAYER_MOVE:
                 {
                     if (DEBUG) Debug.Log("PTS_PLAYER_MOVE");
-                    StringBuilder sendMsg = new StringBuilder();
                     int movedPlayerSeed = int.Parse(csv[1]);
                     Vector3 position = GetVector3Info(csv, 2);
                     
                     gameLogic.MovePlayer(movedPlayerSeed, position);
                 }
                 break;
-                
-            case ServerToClientSignifiers.PTS_PLAYER_LEFT:
+			case ServerToClientSignifiers.PTS_PLAYER_MOVE2:
+				{
+					if (DEBUG) Debug.Log("PTS_PLAYER_MOVE2");
+					int movedPlayerSeed = int.Parse(csv[1]);
+					Vector3 position = GetVector3Info(csv, 2);
+                    Vector2 inputKeys = GetVector2Info(csv, 5);
+					gameLogic.MovePlayer(movedPlayerSeed, position, inputKeys);
+				}
+				break;
+
+			case ServerToClientSignifiers.PTS_PLAYER_LEFT:
             {
                 if (DEBUG) Debug.Log("PTS_PLAYER_LEFT");
                 int leftPlayerSeed = int.Parse(csv[1]);
@@ -123,10 +131,18 @@ static public class NetworkClientProcessing
         
         return result;
     }
-    #endregion
-    
-    #region Setup
-    static NetworkClient networkClient;
+	static public Vector2 GetVector2Info(string[] pos, int startIdx = 0)
+	{
+		Vector2 result = Vector2.zero;
+
+		result.Set(float.Parse(pos[startIdx]), float.Parse(pos[startIdx + 1]));
+
+		return result;
+	}
+	#endregion
+
+	#region Setup
+	static NetworkClient networkClient;
     static GameLogic gameLogic;
     
     static public void SetNetworkedClient(NetworkClient NetworkClient)
@@ -151,8 +167,9 @@ static public class ClientToServerSignifiers
     public const int PTC_CONNECTED_NEW_PLAYER                       = 1;
     public const int PTC_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
     public const int PTC_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
-    public const int PTC_PLAYER_MOVE                                = 4;
-    public const int PTC_PLAYER_LEFT                                = 5;
+	public const int PTC_PLAYER_MOVE                                = 4;
+	public const int PTC_PLAYER_MOVE2                               = 5;
+	public const int PTC_PLAYER_LEFT                                = 6;
 }
 
 static public class ServerToClientSignifiers
@@ -161,7 +178,8 @@ static public class ServerToClientSignifiers
     public const int PTS_CONNECTED_NEW_PLAYER_RECEIVE_DATA          = 2;
     public const int PTS_CONNECTED_PLAYERS_RECEIVE_NEW_PLAYER_DATA  = 3;
     public const int PTS_PLAYER_MOVE                                = 4;
-    public const int PTS_PLAYER_LEFT                                = 5;
+	public const int PTS_PLAYER_MOVE2                               = 5;
+	public const int PTS_PLAYER_LEFT                                = 6;
 }
 #endregion
 

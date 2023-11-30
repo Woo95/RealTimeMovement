@@ -7,20 +7,23 @@ public class PlayerData
 	public int m_ClientConnectionID;
 	public int m_Seed;
 	public Vector3 m_Position;
+	public Vector2 m_InputKey;
 	public PlayerData(int clientConnectionID, int seed)
 	{
 		m_ClientConnectionID = clientConnectionID;
 		m_Seed = seed;
 		m_Position = Vector3.zero;
+		m_InputKey = Vector2.zero;
 	}
 
 	public void SetData(string posX, string posY, string posZ)
 	{
 		m_Position.Set(float.Parse(posX), float.Parse(posY), float.Parse(posZ));
 	}
-	public void SetData(float posX, float posY, float posZ)
+	public void SetData(string posX, string posY, string posZ, string hInputKey, string vInputKey)
 	{
-		m_Position.Set(posX, posY, posZ);
+		m_Position.Set(float.Parse(posX), float.Parse(posY), float.Parse(posZ));
+		m_InputKey.Set(float.Parse(hInputKey), float.Parse(vInputKey));
 	}
 }
 
